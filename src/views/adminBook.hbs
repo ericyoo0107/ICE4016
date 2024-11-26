@@ -1,0 +1,44 @@
+<h1>{{Book_Admin}}</h1>
+
+<table>
+  <tr>
+    <td>ISBN</td>
+    <td>Title</td>
+    <td>Category</td>
+    <td>Writen_by</td>
+    <td>Year</td>
+    <td>Price</td>
+  </tr>
+  {{#each books}}
+    <form method="post">
+      <tr>
+        <!-- 기존 데이터 표시 -->
+        <td>{{ISBN}}</td>
+        <td style="display: none"><input
+            type="text"
+            name="ISBN"
+            value={{ISBN}}
+          /></td>
+        <td><input type="text" name="Title" value="{{Title}}" /></td>
+        <td><input type="text" name="Category" value="{{Category}}" /></td>
+        <td><input type="text" name="Writen_by" value="{{Writen_by}}" /></td>
+        <td><input type="text" name="Year" value="{{Year}}" /></td>
+        <td><input type="text" name="Price" value="{{Price}}" /></td>
+        <!-- Update 버튼 -->
+        <td><input
+            type="submit"
+            name="Modify"
+            formaction="/admin/book/update"
+            value="수정"
+          /></td>
+        <!-- Delete 버튼 -->
+        <td><input
+            type="submit"
+            name="Modify"
+            formaction="/admin/book/delete"
+            value="삭제"
+          /></td>
+      </tr>
+    </form>
+  {{/each}}
+</table>

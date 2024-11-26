@@ -3,7 +3,8 @@ import logger from "morgan";
 import path from "path";
 import expressSession from "express-session";
 
-import loginRouter from "./routes/login.js";
+import loginRouter from "./routes/login";
+import adminBookRouter from "./routes/admin";
 
 const PORT = 3000;
 
@@ -24,7 +25,9 @@ app.set("views", path.join(__dirname, "./views"));
 app.set("view engine", "hbs");
 
 app.use(logger("dev"));
+
 app.use("/", loginRouter);
+app.use("/admin", adminBookRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);

@@ -11,9 +11,8 @@ router.post("/", async (req, res) => {
   const vars = req.body;
   const users = await selectSql.getUser();
 
-  users.map((user) => {
-    console.log("ID :", user.Id);
-    if (vars.id === users.Email && vars.password === users.Password) {
+  users.map((users) => {
+    if (vars.Email === users.Email && vars.password === users.Password) {
       console.log("login success!");
       req.session.user = {
         Email: users.Email,
@@ -33,10 +32,9 @@ router.post("/", async (req, res) => {
     res.redirect("/admin/book");
   } else if (
     req.session.user.checkLogin &&
-    req.session.user.role === "student"
+    req.session.user.role === "customer"
   ) {
     res.redirect("/search");
-    s;
   }
 });
 
