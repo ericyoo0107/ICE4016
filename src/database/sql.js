@@ -23,6 +23,11 @@ export const selectSql = {
     const [result] = await promisePool.query(sql);
     return result;
   },
+  getAuthor: async () => {
+    const sql = `select * from author`;
+    const [result] = await promisePool.query(sql);
+    return result;
+  },
 };
 
 export const insertSql = {
@@ -39,6 +44,26 @@ export const insertSql = {
           book.Writen_by,
           book.Year,
           book.Price,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  addAuthor: async (author) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `insert into author (Name, Address, URL) values (?, ?, ?)`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          author.Name,
+          author.Address,
+          author.URL,
         ]);
         conn.commit();
         return result;
@@ -77,6 +102,28 @@ export const updateSql = {
       }
     }
   },
+  updateAuthor: async (author) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const lockSql = `SELECT * FROM author WHERE Name = ? FOR UPDATE`;
+    await conn.query(lockSql, [author.Name]);
+    const sql = `update author set Address = ?, URL = ? where Name = ?`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          author.Address,
+          author.URL,
+          author.Name,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
 };
 
 export const deleteSql = {
@@ -87,6 +134,22 @@ export const deleteSql = {
     if (conn) {
       try {
         const [result] = await conn.query(sql, [ISBN]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  deleteAuthor: async (Name) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `delete from author where Name = ?`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [Name]);
         conn.commit();
         return result;
       } catch (err) {

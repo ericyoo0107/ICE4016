@@ -1,0 +1,68 @@
+<head>
+  <link rel="stylesheet" type="text/css" href="/adminHeader.css" />
+</head>
+
+<h1>Author_Admin</h1>
+
+<header class="header">
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="/admin/book">Book</a></li>
+        <li><a href="/admin/author">Author</a></li>
+        <li><a href="/admin/award">Award</a></li>
+        <li><a href="/admin/warehouse">Warehouse</a></li>
+        <li><a href="/admin/inventory">Inventory</a></li>
+        <li><a href="/admin/contains">Contains</a></li>
+      </ul>
+    </nav>
+</header>
+
+<table>
+  <tr>
+    <td>Name</td>
+    <td>Address</td>
+    <td>URL</td>
+  </tr>
+  {{#each authors}}
+    <form method="post">
+      <tr>
+        <!-- 기존 데이터 표시 -->
+        <td>{{Name}}</td>
+        <td style="display: none"><input
+            type="text"
+            name="Name"
+            value={{Name}}
+          /></td>
+        <td><input type="text" name="Address" value="{{Address}}" /></td>
+        <td><input type="text" name="URL" value="{{URL}}" /></td>
+        <!-- Update 버튼 -->
+        <td><input
+            type="submit"
+            name="Modify"
+            formaction="/admin/author/update"
+            value="수정"
+          /></td>
+        <!-- Delete 버튼 -->
+        <td><input
+            type="submit"
+            name="Delete"
+            formaction="/admin/author/delete"
+            value="삭제"
+          /></td>
+      </tr>
+    </form>
+  {{/each}}
+  <!-- 새로운 데이터 입력 -->
+  <form method="post">
+    <tr>
+      <td><input type="text" name="Name" /></td>
+      <td><input type="text" name="Address" /></td>
+      <td><input type="text" name="URL" /></td>
+      <td><input
+          type="submit"
+          name="Add"
+          formaction="/admin/author/add"
+          value="추가"
+        /></td>
+    </tr>
+</table>
