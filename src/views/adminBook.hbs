@@ -41,4 +41,20 @@
       </tr>
     </form>
   {{/each}}
+  <!-- 새로운 데이터 입력 -->
+  <form method="post">
+    <tr>
+      <td><input type="text" name="ISBN" /></td>
+      <td><input type="text" name="Title" /></td>
+      <td><input type="text" name="Category" /></td>
+      <td><input type="text" name="Writen_by" /></td>
+      <td><input type="text" name="Year" /></td>
+      <td><input type="text" name="Price" /></td>
+      <td><input
+          type="submit"
+          name="Add"
+          formaction="/admin/book/add"
+          value="추가"
+        /></td>
+    </tr>
 </table>

@@ -25,6 +25,32 @@ export const selectSql = {
   },
 };
 
+export const insertSql = {
+  addBook: async (book) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `insert into book (ISBN, Title, Category, Writen_by, Year, Price) values (?, ?, ?, ?, ?, ?)`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          book.ISBN,
+          book.Title,
+          book.Category,
+          book.Writen_by,
+          book.Year,
+          book.Price,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+};
+
 export const updateSql = {
   updateBook: async (book) => {
     const conn = await promisePool.getConnection();

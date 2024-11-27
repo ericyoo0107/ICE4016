@@ -1,5 +1,5 @@
 import express from "express";
-import { selectSql, updateSql, deleteSql } from "../database/sql";
+import { selectSql, insertSql, updateSql, deleteSql } from "../database/sql";
 
 const router = express.Router();
 
@@ -35,6 +35,20 @@ router.post("/book/update", async (req, res) => {
 router.post("/book/delete", async (req, res) => {
   const ISBN = req.body.ISBN;
   await deleteSql.deleteBook(ISBN);
+  res.redirect("/admin/book");
+});
+
+router.post("/book/add", async (req, res) => {
+  const book = req.body;
+  const data = {
+    ISBN: book.ISBN,
+    Title: book.Title,
+    Category: book.Category,
+    Writen_by: book.Writen_by,
+    Year: book.Year,
+    Price: book.Price,
+  };
+  await insertSql.addBook(data);
   res.redirect("/admin/book");
 });
 
