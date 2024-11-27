@@ -97,4 +97,52 @@ router.post("/author/add", async (req, res) => {
   res.redirect("/admin/author");
 });
 
+// Award
+router.get("/award", async (req, res) => {
+  if (req.session.user == undefined || req.session.user.role === "customer") {
+    res.redirect("/");
+  } else if (req.session.user.role === "admin") {
+    const awards = await selectSql.getAward();
+    console.log(awards);
+    res.render("adminAward", {
+      title: "Admin Award",
+      awards: awards,
+    });
+  } else {
+    res.redirect("/");
+  }
+});
+
+router.post("/award/update", async (req, res) => {
+  const award = req.body;
+  const data = {
+    Name: award.Name,
+    Year: award.Year,
+    Received_by: award.Received_by,
+    Awarded_to: award.Awarded_to,
+    ID: award.ID,
+  };
+  await updateSql.updateAward(data);
+  res.redirect("/admin/award");
+});
+
+router.post("/award/delete", async (req, res) => {
+  const ID = req.body.ID;
+  await deleteSql.deleteAward(ID);
+  res.redirect("/admin/award");
+});
+
+router.post("/award/add", async (req, res) => {
+  const award = req.body;
+  const data = {
+    ID: award.ID,
+    Name: award.Name,
+    Year: award.Year,
+    Received_by: award.Received_by,
+    Awarded_to: award.Awarded_to,
+  };
+  await insertSql.addAward(data);
+  res.redirect("/admin/award");
+});
+
 module.exports = router;

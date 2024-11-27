@@ -28,6 +28,11 @@ export const selectSql = {
     const [result] = await promisePool.query(sql);
     return result;
   },
+  getAward: async () => {
+    const sql = `select * from award`;
+    const [result] = await promisePool.query(sql);
+    return result;
+  },
 };
 
 export const insertSql = {
@@ -64,6 +69,28 @@ export const insertSql = {
           author.Name,
           author.Address,
           author.URL,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  addAward: async (award) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `insert into award (ID, Name, Year, Received_by, Awarded_to) values (?, ?, ?, ?, ?)`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          award.ID,
+          award.Name,
+          award.Year,
+          award.Received_by,
+          award.Awarded_to,
         ]);
         conn.commit();
         return result;
@@ -124,6 +151,30 @@ export const updateSql = {
       }
     }
   },
+  updateAward: async (award) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const lockSql = `SELECT * FROM award WHERE ID = ? FOR UPDATE`;
+    await conn.query(lockSql, [award.ID]);
+    const sql = `update award set Name = ?, Year = ?, Received_by = ?, Awarded_to = ? where ID = ?`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          award.Name,
+          award.Year,
+          award.Received_by,
+          award.Awarded_to,
+          award.ID,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
 };
 
 export const deleteSql = {
@@ -150,6 +201,22 @@ export const deleteSql = {
     if (conn) {
       try {
         const [result] = await conn.query(sql, [Name]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  deleteAward: async (ID) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `delete from award where ID = ?`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [ID]);
         conn.commit();
         return result;
       } catch (err) {
