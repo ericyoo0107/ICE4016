@@ -33,6 +33,11 @@ export const selectSql = {
     const [result] = await promisePool.query(sql);
     return result;
   },
+  getWarehouse: async () => {
+    const sql = `select * from warehouse`;
+    const [result] = await promisePool.query(sql);
+    return result;
+  },
 };
 
 export const insertSql = {
@@ -91,6 +96,26 @@ export const insertSql = {
           award.Year,
           award.Received_by,
           award.Awarded_to,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  addWarehouse: async (warehouse) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `insert into warehouse (Code, Phone, Address) values (?, ?, ?)`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          warehouse.Code,
+          warehouse.Phone,
+          warehouse.Address,
         ]);
         conn.commit();
         return result;
@@ -175,6 +200,28 @@ export const updateSql = {
       }
     }
   },
+  updateWarehouse: async (warehouse) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const lockSql = `SELECT * FROM warehouse WHERE Code = ? FOR UPDATE`;
+    await conn.query(lockSql, [warehouse.Code]);
+    const sql = `update award set Phone = ?, Address = ? where Code = ?`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          warehouse.Phone,
+          warehouse.Address,
+          warehouse.Code,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
 };
 
 export const deleteSql = {
@@ -217,6 +264,22 @@ export const deleteSql = {
     if (conn) {
       try {
         const [result] = await conn.query(sql, [ID]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  deleteWarehouse: async (Code) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `delete from warehouse where Code = ?`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [Code]);
         conn.commit();
         return result;
       } catch (err) {

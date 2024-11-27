@@ -145,4 +145,48 @@ router.post("/award/add", async (req, res) => {
   res.redirect("/admin/award");
 });
 
+// Warehouse
+router.get("/warehouse", async (req, res) => {
+  if (req.session.user == undefined || req.session.user.role === "customer") {
+    res.redirect("/");
+  } else if (req.session.user.role === "admin") {
+    const warehouses = await selectSql.getWarehouse();
+    console.log(warehouses);
+    res.render("adminWarehouse", {
+      title: "Admin Warehouse",
+      warehouses: warehouses,
+    });
+  } else {
+    res.redirect("/");
+  }
+});
+
+router.post("/warehouse/update", async (req, res) => {
+  const warehouse = req.body;
+  const data = {
+    Phone: warehouse.Phone,
+    Address: warehouse.Address,
+    Code: warehouse.Code,
+  };
+  await updateSql.updateWarehouse(data);
+  res.redirect("/admin/warehouse");
+});
+
+router.post("/warehouse/delete", async (req, res) => {
+  const Code = req.body.Code;
+  await deleteSql.deleteWarehouse(Code);
+  res.redirect("/admin/warehouse");
+});
+
+router.post("/warehouse/add", async (req, res) => {
+  const warehouse = req.body;
+  const data = {
+    Code: warehouse.Code,
+    Phone: warehouse.Phone,
+    Address: warehouse.Address,
+  };
+  await insertSql.addWarehouse(data);
+  res.redirect("/admin/warehouse");
+});
+
 module.exports = router;
