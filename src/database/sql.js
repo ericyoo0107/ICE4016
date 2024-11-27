@@ -43,6 +43,11 @@ export const selectSql = {
     const [result] = await promisePool.query(sql);
     return result;
   },
+  getContains: async () => {
+    const sql = `select * from contains`;
+    const [result] = await promisePool.query(sql);
+    return result;
+  },
 };
 
 export const insertSql = {
@@ -141,6 +146,26 @@ export const insertSql = {
           inventory.Number,
           inventory.Book_ISBN,
           inventory.Warehouse_Code,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  addContains: async (contains) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `insert into contains (Number, Book_ISBN, BasketID) values (?, ?, ?)`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          contains.Number,
+          contains.Book_ISBN,
+          contains.BasketID,
         ]);
         conn.commit();
         return result;
@@ -269,6 +294,28 @@ export const updateSql = {
       }
     }
   },
+  updateContains: async (contains) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const lockSql = `SELECT * FROM contains WHERE Book_ISBN = ? AND BasketID = ? FOR UPDATE`;
+    await conn.query(lockSql, [contains.Book_ISBN, contains.BasketID]);
+    const sql = `update contains set Number = ? where Book_ISBN = ? AND BasketID = ?`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          contains.Number,
+          contains.Book_ISBN,
+          contains.BasketID,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
 };
 
 export const deleteSql = {
@@ -346,6 +393,22 @@ export const deleteSql = {
           data.Book_ISBN,
           data.Warehouse_Code,
         ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  deleteContains: async (data) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `delete from contains where Book_ISBN = ? AND BasketID = ?`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [data.Book_ISBN, data.BasketID]);
         conn.commit();
         return result;
       } catch (err) {

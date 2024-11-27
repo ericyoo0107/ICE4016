@@ -232,4 +232,52 @@ router.post("/inventory/add", async (req, res) => {
   res.redirect("/admin/inventory");
 });
 
+// Contains
+router.get("/contains", async (req, res) => {
+  if (req.session.user == undefined || req.session.user.role === "customer") {
+    res.redirect("/");
+  } else if (req.session.user.role === "admin") {
+    const containss = await selectSql.getContains();
+    console.log(containss);
+    res.render("adminContains", {
+      title: "Admin Contains",
+      containss: containss,
+    });
+  } else {
+    res.redirect("/");
+  }
+});
+
+router.post("/contains/update", async (req, res) => {
+  const contains = req.body;
+  const data = {
+    Number: contains.Number,
+    Book_ISBN: contains.Book_ISBN,
+    BasketID: contains.BasketID,
+  };
+  await updateSql.updateContains(data);
+  res.redirect("/admin/contains");
+});
+
+router.post("/contains/delete", async (req, res) => {
+  const contains = req.body;
+  const data = {
+    Book_ISBN: contains.Book_ISBN,
+    BasketID: contains.BasketID,
+  };
+  await deleteSql.deleteContains(data);
+  res.redirect("/admin/contains");
+});
+
+router.post("/contains/add", async (req, res) => {
+  const inventory = req.body;
+  const data = {
+    Number: inventory.Number,
+    Book_ISBN: inventory.Book_ISBN,
+    BasketID: inventory.BasketID,
+  };
+  await insertSql.addContains(data);
+  res.redirect("/admin/contains");
+});
+
 module.exports = router;

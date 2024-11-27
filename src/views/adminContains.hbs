@@ -1,0 +1,73 @@
+<head>
+  <link rel="stylesheet" type="text/css" href="/adminHeader.css" />
+</head>
+
+<h1>Contains_Admin</h1>
+
+<header class="header">
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="/admin/book">Book</a></li>
+        <li><a href="/admin/author">Author</a></li>
+        <li><a href="/admin/award">Award</a></li>
+        <li><a href="/admin/warehouse">Warehouse</a></li>
+        <li><a href="/admin/inventory">Inventory</a></li>
+        <li><a href="/admin/contains">Contains</a></li>
+      </ul>
+    </nav>
+</header>
+
+<table>
+  <tr>
+    <td>Number</td>
+    <td>Book_ISBN</td>
+    <td>BasketID</td>
+  </tr>
+  {{#each containss}}
+    <form method="post">
+      <tr>
+        <!-- 기존 데이터 표시 -->
+        <td><input type="text" name="Number" value="{{Number}}" /></td>
+        <td>{{Book_ISBN}}</td>
+        <td style="display: none"><input
+            type="text"
+            name="Book_ISBN"
+            value={{Book_ISBN}}
+          /></td>
+          <td>{{BasketID}}</td>
+        <td style="display: none"><input
+            type="text"
+            name="BasketID"
+            value={{BasketID}}
+          /></td>
+        <!-- Update 버튼 -->
+        <td><input
+            type="submit"
+            name="Modify"
+            formaction="/admin/contains/update"
+            value="수정"
+          /></td>
+        <!-- Delete 버튼 -->
+        <td><input
+            type="submit"
+            name="Delete"
+            formaction="/admin/contains/delete"
+            value="삭제"
+          /></td>
+      </tr>
+    </form>
+  {{/each}}
+  <!-- 새로운 데이터 입력 -->
+  <form method="post">
+    <tr>
+      <td><input type="text" name="Number" /></td>
+      <td><input type="text" name="Book_ISBN" /></td>
+      <td><input type="text" name="BasketID" /></td>
+      <td><input
+          type="submit"
+          name="Add"
+          formaction="/admin/contains/add"
+          value="추가"
+        /></td>
+    </tr>
+</table>
