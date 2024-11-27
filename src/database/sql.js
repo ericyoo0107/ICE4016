@@ -55,6 +55,8 @@ export const updateSql = {
   updateBook: async (book) => {
     const conn = await promisePool.getConnection();
     await conn.beginTransaction();
+    const lockSql = `SELECT * FROM book WHERE ISBN = ? FOR UPDATE`;
+    await conn.query(lockSql, [book.ISBN]);
     const sql = `update book set Title = ?, Category = ?, Writen_by = ?, Year = ?, Price = ? where ISBN = ?`;
     if (conn) {
       try {
