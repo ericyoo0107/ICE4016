@@ -163,12 +163,7 @@ router.get("/warehouse", async (req, res) => {
 
 router.post("/warehouse/update", async (req, res) => {
   const warehouse = req.body;
-  const data = {
-    Phone: warehouse.Phone,
-    Address: warehouse.Address,
-    Code: warehouse.Code,
-  };
-  await updateSql.updateWarehouse(data);
+  await updateSql.updateWarehouse(warehouse);
   res.redirect("/admin/warehouse");
 });
 
@@ -187,6 +182,54 @@ router.post("/warehouse/add", async (req, res) => {
   };
   await insertSql.addWarehouse(data);
   res.redirect("/admin/warehouse");
+});
+
+// Inventory
+router.get("/inventory", async (req, res) => {
+  if (req.session.user == undefined || req.session.user.role === "customer") {
+    res.redirect("/");
+  } else if (req.session.user.role === "admin") {
+    const inventorys = await selectSql.getInventory();
+    console.log(inventorys);
+    res.render("adminInventory", {
+      title: "Admin Inventory",
+      inventorys: inventorys,
+    });
+  } else {
+    res.redirect("/");
+  }
+});
+
+router.post("/inventory/update", async (req, res) => {
+  const inventory = req.body;
+  const data = {
+    Number: inventory.Number,
+    Book_ISBN: inventory.Book_ISBN,
+    Warehouse_Code: inventory.Warehouse_Code,
+  };
+  await updateSql.updateInventory(data);
+  res.redirect("/admin/inventory");
+});
+
+router.post("/inventory/delete", async (req, res) => {
+  const inventory = req.body;
+  const data = {
+    Book_ISBN: inventory.Book_ISBN,
+    Warehouse_Code: inventory.Warehouse_Code,
+  };
+  await deleteSql.deleteInventory(data);
+  res.redirect("/admin/inventory");
+});
+
+router.post("/inventory/add", async (req, res) => {
+  const inventory = req.body;
+  const data = {
+    Number: inventory.Number,
+    Book_ISBN: inventory.Book_ISBN,
+    Warehouse_Code: inventory.Warehouse_Code,
+  };
+  await insertSql.addInventory(data);
+  res.redirect("/admin/inventory");
 });
 
 module.exports = router;

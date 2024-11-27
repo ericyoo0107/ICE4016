@@ -38,6 +38,11 @@ export const selectSql = {
     const [result] = await promisePool.query(sql);
     return result;
   },
+  getInventory: async () => {
+    const sql = `select * from inventory`;
+    const [result] = await promisePool.query(sql);
+    return result;
+  },
 };
 
 export const insertSql = {
@@ -116,6 +121,26 @@ export const insertSql = {
           warehouse.Code,
           warehouse.Phone,
           warehouse.Address,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  addInventory: async (inventory) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `insert into inventory (Number, Book_ISBN, Warehouse_Code) values (?, ?, ?)`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          inventory.Number,
+          inventory.Book_ISBN,
+          inventory.Warehouse_Code,
         ]);
         conn.commit();
         return result;
@@ -205,13 +230,35 @@ export const updateSql = {
     await conn.beginTransaction();
     const lockSql = `SELECT * FROM warehouse WHERE Code = ? FOR UPDATE`;
     await conn.query(lockSql, [warehouse.Code]);
-    const sql = `update award set Phone = ?, Address = ? where Code = ?`;
+    const sql = `update warehouse set Phone = ?, Address = ? where Code = ?`;
     if (conn) {
       try {
         const [result] = await conn.query(sql, [
           warehouse.Phone,
           warehouse.Address,
           warehouse.Code,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  updateInventory: async (inventory) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const lockSql = `SELECT * FROM inventory WHERE Book_ISBN = ? AND Warehouse_Code = ? FOR UPDATE`;
+    await conn.query(lockSql, [inventory.Book_ISBN, inventory.Warehouse_Code]);
+    const sql = `update inventory set Number = ? where Book_ISBN = ? AND Warehouse_Code = ?`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          inventory.Number,
+          inventory.Book_ISBN,
+          inventory.Warehouse_Code,
         ]);
         conn.commit();
         return result;
@@ -280,6 +327,25 @@ export const deleteSql = {
     if (conn) {
       try {
         const [result] = await conn.query(sql, [Code]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  deleteInventory: async (data) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `delete from inventory where Book_ISBN = ? AND Warehouse_Code = ?`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          data.Book_ISBN,
+          data.Warehouse_Code,
+        ]);
         conn.commit();
         return result;
       } catch (err) {
