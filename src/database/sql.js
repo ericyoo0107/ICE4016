@@ -27,23 +27,45 @@ export const selectSql = {
 
 export const updateSql = {
   updateBook: async (book) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
     const sql = `update book set Title = ?, Category = ?, Writen_by = ?, Year = ?, Price = ? where ISBN = ?`;
-    const [result] = await promisePool.query(sql, [
-      book.Title,
-      book.Category,
-      book.Writen_by,
-      book.Year,
-      book.Price,
-      book.ISBN,
-    ]);
-    return result;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          book.Title,
+          book.Category,
+          book.Writen_by,
+          book.Year,
+          book.Price,
+          book.ISBN,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
   },
 };
 
 export const deleteSql = {
   deleteBook: async (ISBN) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
     const sql = `delete from book where ISBN = ?`;
-    const [result] = await promisePool.query(sql, [ISBN]);
-    return result;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [ISBN]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
   },
 };
