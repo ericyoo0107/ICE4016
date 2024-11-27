@@ -1,0 +1,53 @@
+<head>
+  <link rel="stylesheet" type="text/css" href="/customerHeader.css" />
+</head>
+
+<h1>Search_Customer</h1>
+
+<header class="header">
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="/search">검색</a></li>
+        <li><a href="/reservation">예약 조회</a></li>
+        <li><a href="/basket">장바구니 조회</a></li>
+      </ul>
+    </nav>
+</header>
+
+<table>
+    <form method="get" action="/search">
+  <input type="text" name="Name" placeholder="검색어를 입력하세요" required />
+  <button type="submit">검색</button>
+</form>
+  <tr>
+    <td>ISBN</td>
+    <td>Title</td>
+    <td>Category</td>
+    <td>Writen_by</td>
+    <td>Publish_Year</td>
+    <td>Price</td>
+    <td>Award_Name</td>
+    <td>Award_Year</td>
+  </tr>
+  {{#each result}}
+    <form method="post">
+      <tr>
+        <!-- 기존 데이터 표시 -->
+        <td>{{ISBN}}</td>
+        <td>{{Title}}</td>
+        <td>{{Category}}</td>
+        <td>{{Writen_by}}</td>
+        <td>{{Year}}</td>
+        <td>{{Price}}</td>
+        <td>{{Name}}</td>
+        <td>{{Year}}</td>
+        <!-- Insert 버튼 -->
+        <td><input
+            type="submit"
+            name="Insert"
+            formaction="/basket/insert"
+            value="장바구니에 추가"
+          /></td>
+      </tr>
+    </form>
+  {{/each}}

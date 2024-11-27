@@ -4,7 +4,8 @@ import path from "path";
 import expressSession from "express-session";
 
 import loginRouter from "./routes/login";
-import adminBookRouter from "./routes/admin";
+import adminRouter from "./routes/admin";
+import searchRouter from "./routes/search";
 
 const PORT = 3000;
 
@@ -27,7 +28,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(logger("dev"));
 
 app.use("/", loginRouter);
-app.use("/admin", adminBookRouter);
+app.use("/admin", adminRouter);
+app.use("/", searchRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);

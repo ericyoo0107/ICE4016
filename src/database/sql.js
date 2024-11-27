@@ -1,3 +1,4 @@
+import e from "express";
 import mysql from "mysql2";
 
 require("dotenv").config();
@@ -416,6 +417,33 @@ export const deleteSql = {
       } finally {
         conn.release();
       }
+    }
+  },
+};
+
+export const searchSql = {
+  searchBook: async (Name) => {
+    if (Name === undefined) {
+      const sql =
+        `SELECT B.ISBN, B.Title, B.Category, B.Writen_by, B.Year, B.Price, A.Name, A.Year ` +
+        `FROM award A ` +
+        `JOIN book B ON B.ISBN = A.Awarded_to ` +
+        `JOIN author AU ON AU.Name = A.Received_by`;
+      const [result] = await promisePool.query(sql);
+      return result;
+    } else {
+      const sql =
+        `SELECT B.ISBN, B.Title, B.Category, B.Writen_by, B.Year, B.Price, A.Name, A.Year ` +
+        `FROM award A ` +
+        `JOIN book B ON B.ISBN = A.Awarded_to ` +
+        `JOIN author AU ON AU.Name = A.Received_by ` +
+        `WHERE A.Name LIKE ? OR B.Title Like ? OR AU.Name Like ?`;
+      const [result] = await promisePool.query(sql, [
+        `%${Name}%`,
+        `%${Name}%`,
+        `%${Name}%`,
+      ]);
+      return result;
     }
   },
 };
