@@ -24,18 +24,18 @@ router.post("/book/update", async (req, res) => {
     ISBN: book.ISBN,
     Title: book.Title,
     Category: book.Category,
-    Writen_By: book.Writen_By,
+    Writen_by: book.Writen_by,
     Year: book.Year,
     Price: book.Price,
   };
   await updateSql.updateBook(data);
-  res.redirect("/book");
+  res.redirect("/admin/book");
 });
 
-router.delete("/book/delete", async (req, res) => {
+router.post("/book/delete", async (req, res) => {
   const ISBN = req.body.ISBN;
   await deleteSql.deleteBook(ISBN);
-  res.redirect("/book");
+  res.redirect("/admin/book");
 });
 
 module.exports = router;

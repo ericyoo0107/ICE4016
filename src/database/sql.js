@@ -27,11 +27,11 @@ export const selectSql = {
 
 export const updateSql = {
   updateBook: async (book) => {
-    const sql = `update book set Title = ?, Author = ?, Publisher = ?, Year = ?, Price = ? where ISBN = ?`;
+    const sql = `update book set Title = ?, Category = ?, Writen_by = ?, Year = ?, Price = ? where ISBN = ?`;
     const [result] = await promisePool.query(sql, [
       book.Title,
-      book.Author,
-      book.Publisher,
+      book.Category,
+      book.Writen_by,
       book.Year,
       book.Price,
       book.ISBN,
