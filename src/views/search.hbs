@@ -5,20 +5,21 @@
 <h1>Search_Customer</h1>
 
 <header class="header">
-    <nav class="nav-menu">
-      <ul>
-        <li><a href="/search">검색</a></li>
-        <li><a href="/reservation">예약 조회</a></li>
-        <li><a href="/basket">장바구니 조회</a></li>
-      </ul>
-    </nav>
+  <nav class="nav-menu">
+    <ul>
+      <li><a href="/search">검색</a></li>
+      <li><a href="/reservation">예약 조회</a></li>
+      <li><a href="/basket">장바구니 조회</a></li>
+    </ul>
+  </nav>
 </header>
 
 <table>
-    <form method="get" action="/search">
-  <input type="text" name="Name" placeholder="검색어를 입력하세요" required />
-  <button type="submit">검색</button>
-</form>
+  <h2>도서 검색</h2>
+  <form method="get" action="/search">
+    <input type="text" name="Name" placeholder="검색어를 입력하세요" required />
+    <button type="submit">검색</button>
+  </form>
   <tr>
     <td>ISBN</td>
     <td>Title</td>
@@ -35,6 +36,7 @@
       <tr>
         <!-- 기존 데이터 표시 -->
         <td>{{ISBN}}</td>
+        <td><input type="hidden" name="ISBN" value="{{ISBN}}" /></td>
         <td>{{Title}}</td>
         <td>{{Category}}</td>
         <td>{{Writen_by}}</td>
@@ -43,13 +45,20 @@
         <td>{{Name}}</td>
         <td>{{Year}}</td>
         <td>{{count}}</td>
+        <td><input
+            type="number"
+            name="basketCount"
+            placeholder="장바구니 추가 개수"
+            value="{{basketCount}}"
+          /></td>
         <!-- Insert 버튼 -->
         <td><input
             type="submit"
             name="Insert"
             formaction="/basket/insert"
-            value="장바구니에 추가"
+            value="추가"
           /></td>
       </tr>
     </form>
   {{/each}}
+</table>

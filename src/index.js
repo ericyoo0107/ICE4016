@@ -6,6 +6,7 @@ import expressSession from "express-session";
 import loginRouter from "./routes/login";
 import adminRouter from "./routes/admin";
 import searchRouter from "./routes/search";
+import basketRouter from "./routes/basket";
 
 const PORT = 3000;
 
@@ -30,6 +31,7 @@ app.use(logger("dev"));
 app.use("/", loginRouter);
 app.use("/admin", adminRouter);
 app.use("/", searchRouter);
+app.use("/basket", basketRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);

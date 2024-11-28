@@ -11,7 +11,7 @@ router.get("/search", async (req, res) => {
   ) {
     const books = await searchSql.searchBook(req.query.Name);
     const count = await aggregateSql.countBook();
-    console.log(count);
+    // Mapping
     const result = books.map((book) => {
       const bookCount = count.find((c) => c.Book_ISBN === book.ISBN);
       return {
@@ -19,7 +19,6 @@ router.get("/search", async (req, res) => {
         count: bookCount ? bookCount.Number : 0,
       };
     });
-    //todo: 총 수량 가져오기 + Maping
     console.log(result);
     res.render("search", {
       title: "search",

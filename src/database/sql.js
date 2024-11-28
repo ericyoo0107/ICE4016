@@ -49,6 +49,11 @@ export const selectSql = {
     const [result] = await promisePool.query(sql);
     return result;
   },
+  getShoppingBasketByBasketOf: async (Basket_of) => {
+    const sql = `select * from shopping_basket where Basket_of = ?`;
+    const [result] = await promisePool.query(sql, [Basket_of]);
+    return result[0];
+  },
 };
 
 export const insertSql = {
@@ -167,6 +172,52 @@ export const insertSql = {
           contains.Number,
           contains.Book_ISBN,
           contains.BasketID,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  addContainsByCustomer: async (data) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `insert into contains (Number, Book_ISBN, BasketID) values (?, ?, ?)`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          data.basketCount,
+          data.ISBN,
+          data.shopping_basket_id,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  addShoppingBasket: async (Basket_of) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `insert into shopping_basket (BasketID, Order_date, Basket_of) values (?, ?, ?)`;
+    if (conn) {
+      try {
+        const findSql = `select * from shopping_basket`;
+        const [baskets] = await conn.query(findSql);
+        const maxBasketID = Math.max(
+          ...baskets.map((basket) => basket.BasketID)
+        );
+        console.log(maxBasketID);
+        const [result] = await conn.query(sql, [
+          maxBasketID + 1,
+          undefined,
+          Basket_of,
         ]);
         conn.commit();
         return result;
