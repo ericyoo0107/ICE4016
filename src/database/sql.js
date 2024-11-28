@@ -447,3 +447,11 @@ export const searchSql = {
     }
   },
 };
+
+export const aggregateSql = {
+  countBook: async () => {
+    const sql = `SELECT I.Book_ISBN, SUM(I.Number) Number FROM book B JOIN inventory I ON B.ISBN = I.Book_ISBN GROUP BY B.ISBN`;
+    const [result] = await promisePool.query(sql);
+    return result;
+  },
+};

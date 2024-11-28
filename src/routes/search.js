@@ -1,5 +1,5 @@
 import express from "express";
-import { searchSql } from "../database/sql";
+import { searchSql, aggregateSql } from "../database/sql";
 
 const router = express.Router();
 
@@ -9,7 +9,17 @@ router.get("/search", async (req, res) => {
     req.session.user.role === "admin" ||
     req.session.user.role === "customer"
   ) {
-    const result = await searchSql.searchBook(req.query.Name);
+    const books = await searchSql.searchBook(req.query.Name);
+    const count = await aggregateSql.countBook();
+    console.log(count);
+    const result = books.map((book) => {
+      const bookCount = count.find((c) => c.Book_ISBN === book.ISBN);
+      return {
+        ...book,
+        count: bookCount ? bookCount.Number : 0,
+      };
+    });
+    //todo: 총 수량 가져오기 + Maping
     console.log(result);
     res.render("search", {
       title: "search",
