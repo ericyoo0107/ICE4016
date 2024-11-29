@@ -54,6 +54,11 @@ export const selectSql = {
     const [result] = await promisePool.query(sql, [Basket_of]);
     return result[0];
   },
+  getContainsByShoppingBasketID: async (BasketID) => {
+    const sql = `select * from contains C join book B on C.Book_ISBN = B.ISBN where BasketID = ?`;
+    const [result] = await promisePool.query(sql, [BasketID]);
+    return result;
+  },
 };
 
 export const insertSql = {
@@ -368,6 +373,43 @@ export const updateSql = {
       }
     }
   },
+  updateInventoryByPurchase: async (contains) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    for (let i = 0; i < contains.length; i++) {
+      const lockSql = `SELECT * FROM inventory WHERE Book_ISBN = ? FOR UPDATE`;
+      const inventory = await conn.query(lockSql, [contains[i].ISBN]);
+      const updateStockSql = `update inventory set Number = ? where Book_ISBN = ? AND Warehouse_Code = ?`;
+      const updateOrderDateSql = `update shopping_basket set Order_date = ? where BasketID = ?`;
+      if (conn) {
+        try {
+          console.log(
+            "Number : " +
+              Number(inventory[0][0].Number - contains[i].Number) +
+              " ISBN : " +
+              contains[i].ISBN +
+              " Warehouse_Code : " +
+              inventory[0][0].Warehouse_Code
+          );
+          await conn.query(updateStockSql, [
+            Number(inventory[0][0].Number - contains[i].Number),
+            contains[i].ISBN,
+            inventory[0][0].Warehouse_Code,
+          ]);
+          console.log("date" + new Date(), "BasketID" + contains[i].BasketID);
+          await conn.query(updateOrderDateSql, [
+            new Date(),
+            contains[i].BasketID,
+          ]);
+          conn.commit();
+        } catch (err) {
+          await conn.rollback();
+        } finally {
+          conn.release();
+        }
+      }
+    }
+  },
 };
 
 export const deleteSql = {
@@ -504,5 +546,12 @@ export const aggregateSql = {
     const sql = `SELECT I.Book_ISBN, SUM(I.Number) Number FROM book B JOIN inventory I ON B.ISBN = I.Book_ISBN GROUP BY B.ISBN`;
     const [result] = await promisePool.query(sql);
     return result;
+  },
+  countBookByISBN: async (ISBN) => {
+    const sql = `SELECT SUM(I.Number) Number FROM book B JOIN inventory I ON B.ISBN = I.Book_ISBN WHERE B.ISBN = ? GROUP BY B.ISBN`;
+    console.log(ISBN);
+    const [result] = await promisePool.query(sql, [ISBN]);
+    console.log("result : " + JSON.stringify(result[0], null, 2));
+    return result[0];
   },
 };

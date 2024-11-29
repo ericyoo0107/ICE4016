@@ -1,0 +1,59 @@
+<head>
+  <link rel="stylesheet" type="text/css" href="/customerHeader.css" />
+</head>
+
+<h1>Basket_Customer</h1>
+
+<header class="header">
+  <nav class="nav-menu">
+    <ul>
+      <li><a href="/search">검색</a></li>
+      <li><a href="/reservation">예약 조회</a></li>
+      <li><a href="/basket">장바구니 조회</a></li>
+    </ul>
+  </nav>
+</header>
+
+<table>
+  <h2>장바구니</h2>
+  <tr>
+    <td>ISBN</td>
+    <td>Title</td>
+    <td>Category</td>
+    <td>Writen_by</td>
+    <td>Publish_Year</td>
+    <td>Price</td>
+    <td>구매수량</td>
+  </tr>
+  {{#each contains}}
+    <form method="post">
+      <tr>
+        <!-- 기존 데이터 표시 -->
+        <td>{{ISBN}}</td>
+        <td>{{Title}}</td>
+        <td>{{Category}}</td>
+        <td>{{Writen_by}}</td>
+        <td>{{Year}}</td>
+        <td>{{Price}}</td>
+        <td>{{Number}}</td>
+      </tr>
+    </form>
+  {{/each}}
+  <!-- 주문 날짜 표시 -->
+  <tr>
+    <td colspan="7">주문일자: {{Orderdate}}</td>
+  </tr>
+  <tr>
+
+    <td colspan="7" style="text-align: right;">
+      <form method="post" action="/basket/buy">
+        {{#each contains}}
+          <td><input type="hidden" name="ISBN" value="{{ISBN}}" /></td>
+          <td><input type="hidden" name="Number" value="{{Number}}" /></td>
+          <td><input type="hidden" name="BasketID" value="{{BasketID}}" /></td>
+        {{/each}}
+        <button type="submit">구매</button>
+      </form>
+    </td>
+  </tr>
+</table>
