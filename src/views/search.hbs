@@ -28,22 +28,21 @@
     <td>Publish_Year</td>
     <td>Price</td>
     <td>Award_Name</td>
-    <td>Award_Year</td>
     <td>count</td>
+    <td>장바구니 추가</td>
+    <td>책 예약</td>
   </tr>
   {{#each result}}
     <form method="post">
       <tr>
         <!-- 기존 데이터 표시 -->
         <td>{{ISBN}}</td>
-        <td><input type="hidden" name="ISBN" value="{{ISBN}}" /></td>
         <td>{{Title}}</td>
         <td>{{Category}}</td>
         <td>{{Writen_by}}</td>
         <td>{{Year}}</td>
         <td>{{Price}}</td>
         <td>{{Name}}</td>
-        <td>{{Year}}</td>
         <td>{{count}}</td>
         <td><input
             type="number"
@@ -51,13 +50,19 @@
             placeholder="장바구니 추가 개수"
             value="{{basketCount}}"
           /></td>
-        <!-- Insert 버튼 -->
         <td><input
             type="submit"
             name="Insert"
             formaction="/basket/insert"
             value="추가"
           /></td>
+        <td><input
+            type="submit"
+            name="Insert"
+            formaction="/basket/insert"
+            value="추가"
+          /></td>
+        <td><input type="hidden" name="ISBN" value="{{ISBN}}" /></td>
       </tr>
     </form>
   {{/each}}

@@ -7,6 +7,7 @@ import loginRouter from "./routes/login";
 import adminRouter from "./routes/admin";
 import searchRouter from "./routes/search";
 import basketRouter from "./routes/basket";
+import reservationRouter from "./routes/reservation";
 
 const PORT = 3000;
 
@@ -32,6 +33,8 @@ app.use("/", loginRouter);
 app.use("/admin", adminRouter);
 app.use("/", searchRouter);
 app.use("/basket", basketRouter);
+app.use("/basket", basketRouter);
+app.use("/reservation", reservationRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
