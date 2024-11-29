@@ -33,16 +33,17 @@
       <td><input
             type="submit"
             name="Modify"
-            formaction="/admin/inventory/update"
+            formaction="/reservation/modify"
             value="수정"
           /></td>
         <!-- Delete 버튼 -->
         <td><input
             type="submit"
             name="Delete"
-            formaction="/admin/inventory/delete"
+            formaction="/reservation/delete"
             value="삭제"
           /></td>
+          <td><input type="hidden" name="ISBN" value="{{ISBN}}" /></td>
       </tr>
     </form>
   {{/each}}

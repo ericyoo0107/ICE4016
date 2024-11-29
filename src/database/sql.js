@@ -434,6 +434,28 @@ export const updateSql = {
       }
     }
   },
+  updateReservation: async (data) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const lockSql = `SELECT * FROM reservation WHERE Customer_Email = ? AND Book_ISBN = ? FOR UPDATE`;
+    await conn.query(lockSql, [data.Email, data.ISBN]);
+    const sql = `update reservation set Reservation_date = ? where Customer_Email = ? AND Book_ISBN = ?`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          data.Pickup_time,
+          data.Email,
+          data.ISBN,
+        ]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
 };
 
 export const deleteSql = {

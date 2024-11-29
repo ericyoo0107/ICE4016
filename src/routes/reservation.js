@@ -1,5 +1,5 @@
 import express from "express";
-import { insertSql, selectSql } from "../database/sql";
+import { insertSql, selectSql, updateSql } from "../database/sql";
 
 const router = express.Router();
 
@@ -38,6 +38,26 @@ router.get("/", async (req, res) => {
       title: "Customer reservations",
       reservations: reservations,
     });
+  } else {
+    res.redirect("/");
+  }
+});
+
+router.post("/modify", async (req, res) => {
+  if (req.session.user == undefined) {
+    res.redirect("/");
+  } else if (
+    req.session.user.role === "admin" ||
+    req.session.user.role === "customer"
+  ) {
+    const body = req.body;
+    const data = {
+      ISBN: body.ISBN,
+      Email: req.session.user.Email,
+      Pickup_time: body.Pickup_time,
+    };
+    await updateSql.updateReservation(data);
+    res.redirect("/reservation");
   } else {
     res.redirect("/");
   }
