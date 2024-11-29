@@ -1,0 +1,48 @@
+<head>
+  <link rel="stylesheet" type="text/css" href="/customerHeader.css" />
+</head>
+
+<h1>Basket_Customer</h1>
+
+<header class="header">
+  <nav class="nav-menu">
+    <ul>
+      <li><a href="/search">검색</a></li>
+      <li><a href="/reservation">예약 조회</a></li>
+      <li><a href="/basket">장바구니 조회</a></li>
+    </ul>
+  </nav>
+</header>
+
+<table>
+  <h2>예약</h2>
+  <tr>
+    <td>ISBN</td>
+    <td>Title</td>
+    <td>Pickup_time</td>
+    <td>Reservation_date</td>
+  </tr>
+  {{#each reservations}}
+    <form method="post">
+      <tr>
+        <!-- 기존 데이터 표시 -->
+        <td>{{ISBN}}</td>
+        <td>{{Title}}</td>
+        <td><input type="datetime-local" name="Pickup_time" value="{{Pickup_time}}" /></td>
+        <td>{{Reservation_date}}</td>        
+      <td><input
+            type="submit"
+            name="Modify"
+            formaction="/admin/inventory/update"
+            value="수정"
+          /></td>
+        <!-- Delete 버튼 -->
+        <td><input
+            type="submit"
+            name="Delete"
+            formaction="/admin/inventory/delete"
+            value="삭제"
+          /></td>
+      </tr>
+    </form>
+  {{/each}}

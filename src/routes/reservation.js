@@ -1,37 +1,46 @@
 import express from "express";
-import { selectSql } from "../database/sql";
+import { insertSql, selectSql } from "../database/sql";
 
 const router = express.Router();
 
 router.post("/insert", async (req, res) => {
-  const book = req.body;
+  const body = req.body;
   const user = req.session.user;
-  const shopping_basket = await selectSql.getShoppingBasketByBasketOf(
-    user.Email
-  );
-  console.log(shopping_basket);
-  if (shopping_basket === undefined) {
-    const new_shopping_basket = insertSql.addShoppingBasket(user.Email);
-    const data = {
-      basketCount: parseInt(book.basketCount),
-      ISBN: book.ISBN,
-      Email: user.Email,
-      shopping_basket_id: new_shopping_basket.BasketID,
-    };
-    await insertSql.addContainsByCustomer(data);
-  } else {
-    const data = {
-      basketCount: parseInt(book.basketCount),
-      ISBN: book.ISBN,
-      Email: user.Email,
-      shopping_basket_id: shopping_basket.BasketID,
-    };
-    console.log(data);
-
-    await insertSql.addContainsByCustomer(data);
+  console.log(JSON.stringify(body, null, 2));
+  if (body.count === "0") {
+    res.send(`<script>
+            alert('재고가 없습니다.');
+            location.href='/search';
+        </script>`);
+    return;
   }
+  const data = {
+    Pickup_time: body.Pickup_time,
+    Customer_email: user.Email,
+    ISBN: body.ISBN,
+  };
+  await insertSql.addReservation(data);
+  res.redirect("/reservation");
+});
 
-  res.redirect("/basket");
+router.get("/", async (req, res) => {
+  if (req.session.user == undefined) {
+    res.redirect("/");
+  } else if (
+    req.session.user.role === "admin" ||
+    req.session.user.role === "customer"
+  ) {
+    const reservations = await selectSql.getMyReservation(
+      req.session.user.Email
+    );
+    console.log(JSON.stringify(reservations, null, 2));
+    res.render("reservation", {
+      title: "Customer reservations",
+      reservations: reservations,
+    });
+  } else {
+    res.redirect("/");
+  }
 });
 
 module.exports = router;

@@ -30,7 +30,6 @@
     <td>Award_Name</td>
     <td>count</td>
     <td>장바구니 추가</td>
-    <td>책 예약</td>
   </tr>
   {{#each result}}
     <form method="post">
@@ -57,12 +56,19 @@
             value="추가"
           /></td>
         <td><input
+            type="datetime-local"
+            name="Pickup_time"
+            placeholder="예약 시간"
+            value="{{Pickup_time}}"
+          /></td>
+        <td><input
             type="submit"
             name="Insert"
-            formaction="/basket/insert"
-            value="추가"
+            formaction="/reservation/insert"
+            value="예약"
           /></td>
         <td><input type="hidden" name="ISBN" value="{{ISBN}}" /></td>
+        <td><input type="hidden" name="count" value="{{count}}" /></td>
       </tr>
     </form>
   {{/each}}

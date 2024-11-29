@@ -59,6 +59,11 @@ export const selectSql = {
     const [result] = await promisePool.query(sql, [BasketID]);
     return result;
   },
+  getMyReservation: async (email) => {
+    const sql = `select * from reservation R join book B on R.Book_ISBN = B.ISBN where R.Customer_Email = ?`;
+    const [result] = await promisePool.query(sql, [email]);
+    return result;
+  },
 };
 
 export const insertSql = {
@@ -226,6 +231,25 @@ export const insertSql = {
         ]);
         conn.commit();
         return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
+  addReservation: async (data) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `insert into reservation (Reservation_date, Pickup_time, Customer_Email, Book_ISBN) values (?, ?, ?, ?)`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [
+          new Date(),
+          data.Pickup_time,
+          data.Customer_email,
+          data.ISBN,
+        ]);
       } catch (err) {
         await conn.rollback();
       } finally {
