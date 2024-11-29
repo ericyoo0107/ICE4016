@@ -558,6 +558,22 @@ export const deleteSql = {
       }
     }
   },
+  deleteReservation: async (data) => {
+    const conn = await promisePool.getConnection();
+    await conn.beginTransaction();
+    const sql = `delete from reservation where Book_ISBN = ? AND Customer_Email = ?`;
+    if (conn) {
+      try {
+        const [result] = await conn.query(sql, [data.ISBN, data.Email]);
+        conn.commit();
+        return result;
+      } catch (err) {
+        await conn.rollback();
+      } finally {
+        conn.release();
+      }
+    }
+  },
 };
 
 export const searchSql = {
