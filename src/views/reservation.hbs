@@ -20,6 +20,7 @@
     <td>ISBN</td>
     <td>Title</td>
     <td>Pickup_time</td>
+    <td>Pickup_time 수정</td>
     <td>Reservation_date</td>
   </tr>
   {{#each reservations}}
@@ -28,6 +29,7 @@
         <!-- 기존 데이터 표시 -->
         <td>{{ISBN}}</td>
         <td>{{Title}}</td>
+        <td>{{Pickup_time}}</td>
         <td><input type="datetime-local" name="Pickup_time" value="{{Pickup_time}}" /></td>
         <td>{{Reservation_date}}</td>        
       <td><input

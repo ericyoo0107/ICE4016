@@ -439,7 +439,7 @@ export const updateSql = {
     await conn.beginTransaction();
     const lockSql = `SELECT * FROM reservation WHERE Customer_Email = ? AND Book_ISBN = ? FOR UPDATE`;
     await conn.query(lockSql, [data.Email, data.ISBN]);
-    const sql = `update reservation set Reservation_date = ? where Customer_Email = ? AND Book_ISBN = ?`;
+    const sql = `update reservation set Pickup_time = ? where Customer_Email = ? AND Book_ISBN = ?`;
     if (conn) {
       try {
         const [result] = await conn.query(sql, [
