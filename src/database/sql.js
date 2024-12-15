@@ -241,9 +241,20 @@ export const insertSql = {
   addReservation: async (data) => {
     const conn = await promisePool.getConnection();
     await conn.beginTransaction();
+    const findAnothoerReservationSQL = `select * from reservation where Book_ISBN = ?`;
     const sql = `insert into reservation (Reservation_date, Pickup_time, Customer_Email, Book_ISBN) values (?, ?, ?, ?)`;
     if (conn) {
       try {
+        const [anothoerReservation] = await conn.query(
+          findAnothoerReservationSQL,
+          [data.ISBN]
+        );
+        const newPickup = new Date(data.Pickup_time);
+        newPickup.setMinutes(newPickup.getMinutes() - 10);
+        if (anothoerReservation[0].Pickup_time > newPickup) {
+          console.log("10분 이내에 다른 예약이 있습니다.");
+          throw new Error("10분 이내에 다른 예약이 있습니다.");
+        }
         const [result] = await conn.query(sql, [
           new Date(),
           data.Pickup_time,
@@ -252,6 +263,7 @@ export const insertSql = {
         ]);
       } catch (err) {
         await conn.rollback();
+        throw new Error("10분 이내에 다른 예약이 있습니다.");
       } finally {
         conn.release();
       }
@@ -407,20 +419,11 @@ export const updateSql = {
       const updateOrderDateSql = `update shopping_basket set Order_date = ? where BasketID = ?`;
       if (conn) {
         try {
-          console.log(
-            "Number : " +
-              Number(inventory[0][0].Number - contains[i].Number) +
-              " ISBN : " +
-              contains[i].ISBN +
-              " Warehouse_Code : " +
-              inventory[0][0].Warehouse_Code
-          );
           await conn.query(updateStockSql, [
             Number(inventory[0][0].Number - contains[i].Number),
             contains[i].ISBN,
             inventory[0][0].Warehouse_Code,
           ]);
-          console.log("date" + new Date(), "BasketID" + contains[i].BasketID);
           await conn.query(updateOrderDateSql, [
             new Date(),
             contains[i].BasketID,
@@ -594,9 +597,9 @@ export const searchSql = {
         `JOIN author AU ON AU.Name = A.Received_by ` +
         `WHERE A.Name LIKE ? OR B.Title Like ? OR AU.Name Like ?`;
       const [result] = await promisePool.query(sql, [
-        `%${Name}%`,
-        `%${Name}%`,
-        `%${Name}%`,
+        `${Name}%`,
+        `${Name}%`,
+        `${Name}%`,
       ]);
       return result;
     }

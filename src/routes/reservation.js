@@ -19,7 +19,16 @@ router.post("/insert", async (req, res) => {
     Customer_email: user.Email,
     ISBN: body.ISBN,
   };
-  await insertSql.addReservation(data);
+  try {
+    await insertSql.addReservation(data);
+  } catch (e) {
+    console.log(e);
+    res.send(`<script>
+            alert("10분 이내에 다른 예약이 있습니다.");
+            location.href='/search';
+        </script>`);
+    return;
+  }
   res.redirect("/reservation");
 });
 

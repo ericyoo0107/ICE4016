@@ -52,10 +52,8 @@ router.post("/insert", async (req, res) => {
       shopping_basket_id: shopping_basket.BasketID,
     };
     console.log(data);
-
     await insertSql.addContainsByCustomer(data);
   }
-
   res.redirect("/basket");
 });
 
@@ -69,7 +67,6 @@ router.post("/buy", async (req, res) => {
   const isbnArray = isbnString[0].split(",");
   const numberArray = numberString[0].split(",");
   const basketIdArray = basketIdString[0].split(",");
-  // 각 리스트에서 값을 하나씩 묶어 객체로 만들고 배열에 추가
   for (let i = 0; i < isbnArray.length; i++) {
     contains.push({
       ISBN: isbnArray[i],
